@@ -10,6 +10,7 @@ import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading, setUser } from '@/redux/authSlice'
+import { setSavedJobIds } from '@/redux/jobSlice'
 import { Loader2 } from 'lucide-react'
 
 const Login = () => {
@@ -38,7 +39,10 @@ const Login = () => {
             });
             if (res.data.success) {
                 dispatch(setUser(res.data.user));
-                navigate("/");
+                if (res.data.user?.profile?.savedJobs) {
+                    dispatch(setSavedJobIds(res.data.user.profile.savedJobs));
+                }
+                navigate(res.data.user?.role === "recruiter" ? "/recruiter/dashboard" : "/");
                 toast.success(res.data.message);
             }
         } catch (error) {
@@ -50,7 +54,7 @@ const Login = () => {
     }
     useEffect(()=>{
         if(user){
-            navigate("/");
+            navigate(user.role === "recruiter" ? "/recruiter/dashboard" : "/");
         }
     },[])
     return (

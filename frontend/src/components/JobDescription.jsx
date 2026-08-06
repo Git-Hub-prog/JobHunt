@@ -7,6 +7,7 @@ import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import { formatSalaryInLPA } from '@/utils/formatSalary';
 
 const JobDescription = () => {
     const {singleJob} = useSelector(store => store.job);
@@ -58,7 +59,7 @@ const JobDescription = () => {
                     <div className='flex items-center gap-2 mt-4'>
                         <Badge className={'text-blue-700 font-bold'} variant="ghost">{singleJob?.postion} Positions</Badge>
                         <Badge className={'text-[#F83002] font-bold'} variant="ghost">{singleJob?.jobType}</Badge>
-                        <Badge className={'text-[#7209b7] font-bold'} variant="ghost">{singleJob?.salary}LPA</Badge>
+                        <Badge className={'text-[#7209b7] font-bold'} variant="ghost">{formatSalaryInLPA(singleJob?.salary)}LPA</Badge>
                     </div>
                 </div>
                 <Button
@@ -74,7 +75,7 @@ const JobDescription = () => {
                 <h1 className='font-bold my-1'>Location: <span className='pl-4 font-normal text-gray-800'>{singleJob?.location}</span></h1>
                 <h1 className='font-bold my-1'>Description: <span className='pl-4 font-normal text-gray-800'>{singleJob?.description}</span></h1>
                 <h1 className='font-bold my-1'>Experience: <span className='pl-4 font-normal text-gray-800'>{singleJob?.experience} yrs</span></h1>
-                <h1 className='font-bold my-1'>Salary: <span className='pl-4 font-normal text-gray-800'>{singleJob?.salary}LPA</span></h1>
+                <h1 className='font-bold my-1'>Salary: <span className='pl-4 font-normal text-gray-800'>{formatSalaryInLPA(singleJob?.salary)}LPA</span></h1>
                 <h1 className='font-bold my-1'>Total Applicants: <span className='pl-4 font-normal text-gray-800'>{singleJob?.applications?.length}</span></h1>
                 <h1 className='font-bold my-1'>Posted Date: <span className='pl-4 font-normal text-gray-800'>{singleJob?.createdAt.split("T")[0]}</span></h1>
             </div>

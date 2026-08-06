@@ -1,14 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialFilters = {
+    keyword: "",
+    location: "",
+    role: "",
+    jobType: "",
+    salary: "",
+};
+
 const jobSlice = createSlice({
     name:"job",
     initialState:{
         allJobs:[],
         allAdminJobs:[],
-        singleJob:null, 
+        singleJob:null,
         searchJobByText:"",
         allAppliedJobs:[],
         searchedQuery:"",
+        jobFilters: initialFilters,
+        savedJobIds: [],
     },
     reducers:{
         // actions
@@ -29,15 +39,43 @@ const jobSlice = createSlice({
         },
         setSearchedQuery:(state,action) => {
             state.searchedQuery = action.payload;
+        },
+        setJobFilter:(state, action) => {
+            const { name, value } = action.payload;
+            if (!state.jobFilters) state.jobFilters = { ...initialFilters };
+            state.jobFilters[name] = value;
+        },
+        clearJobFilters:(state) => {
+            state.jobFilters = { ...initialFilters };
+            state.searchedQuery = "";
+        },
+        toggleSavedJob:(state, action) => {
+            const jobId = action.payload;
+            if (!jobId) return;
+
+            if (!state.savedJobIds) state.savedJobIds = [];
+
+            if (state.savedJobIds.includes(jobId)) {
+                state.savedJobIds = state.savedJobIds.filter((id) => id !== jobId);
+            } else {
+                state.savedJobIds.push(jobId);
+            }
+        },
+        setSavedJobIds:(state, action) => {
+            state.savedJobIds = action.payload;
         }
     }
 });
 export const {
-    setAllJobs, 
-    setSingleJob, 
+    setAllJobs,
+    setSingleJob,
     setAllAdminJobs,
-    setSearchJobByText, 
+    setSearchJobByText,
     setAllAppliedJobs,
-    setSearchedQuery
+    setSearchedQuery,
+    setJobFilter,
+    clearJobFilters,
+    toggleSavedJob,
+    setSavedJobIds,
 } = jobSlice.actions;
 export default jobSlice.reducer;

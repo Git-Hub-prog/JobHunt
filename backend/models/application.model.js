@@ -15,6 +15,12 @@ const applicationSchema = new mongoose.Schema({
         type:String,
         enum:['pending', 'accepted', 'rejected'],
         default:'pending'
+    },
+    interviewAt:{
+        type:Date
+    },
+    reminderSentAt:{
+        type:Date
     }
 },{timestamps:true});
 export const Application  = mongoose.model("Application", applicationSchema);

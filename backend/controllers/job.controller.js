@@ -1,4 +1,12 @@
 import { Job } from "../models/job.model.js";
+import { Company } from "../models/company.model.js";
+
+const salaryFilterMap = {
+    "0-40k": { $lte: 40000 },
+    "40k-1lakh": { $gt: 40000, $lte: 100000 },
+    "42-1lakh": { $gt: 40000, $lte: 100000 },
+    "1lakh to 5lakh": { $gte: 100000, $lte: 500000 },
+};
 
 // admin post krega job
 export const postJob = async (req, res) => {
@@ -16,7 +24,7 @@ export const postJob = async (req, res) => {
             title,
             description,
             requirements: requirements.split(","),
-            salary: Number(salary),
+            salary,
             location,
             jobType,
             experienceLevel: experience,
@@ -31,18 +39,41 @@ export const postJob = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Failed to create job.",
+            success: false,
+            error: error.message
+        });
     }
 }
 // student k liye
 export const getAllJobs = async (req, res) => {
     try {
-        const keyword = req.query.keyword || "";
-        const query = {
-            $or: [
-                { title: { $regex: keyword, $options: "i" } },
-                { description: { $regex: keyword, $options: "i" } },
-            ]
-        };
+        const keyword = (req.query.keyword || "").trim();
+        const normalizedKeyword = keyword.toLowerCase();
+
+        let query = {};
+
+        if (salaryFilterMap[normalizedKeyword]) {
+            query = {
+                salary: salaryFilterMap[normalizedKeyword]
+            };
+        } else if (keyword) {
+            const matchedCompanies = await Company.find({
+                name: { $regex: keyword, $options: "i" }
+            }).select("_id");
+
+            query = {
+                $or: [
+                    { title: { $regex: keyword, $options: "i" } },
+                    { description: { $regex: keyword, $options: "i" } },
+                    { location: { $regex: keyword, $options: "i" } },
+                    { jobType: { $regex: keyword, $options: "i" } },
+                    ...(matchedCompanies.length > 0 ? [{ company: { $in: matchedCompanies.map((company) => company._id) } }] : []),
+                ]
+            };
+        }
+
         const jobs = await Job.find(query).populate({
             path: "company"
         }).sort({ createdAt: -1 });

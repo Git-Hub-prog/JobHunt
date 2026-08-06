@@ -22,7 +22,7 @@ const PostJob = () => {
         location: "",
         jobType: "",
         experience: "",
-        position: 0,
+        position: "",
         companyId: ""
     });
     const [loading, setLoading]= useState(false);
@@ -128,7 +128,7 @@ const PostJob = () => {
                         <div>
                             <Label>Experience Level</Label>
                             <Input
-                                type="text"
+                                type="number"
                                 name="experience"
                                 value={input.experience}
                                 onChange={changeEventHandler}
@@ -138,7 +138,7 @@ const PostJob = () => {
                         <div>
                             <Label>No of Postion</Label>
                             <Input
-                                type="number"
+                                type="text"
                                 name="position"
                                 value={input.position}
                                 onChange={changeEventHandler}

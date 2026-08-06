@@ -13,11 +13,16 @@ const ApplicantsTable = () => {
     const { applicants } = useSelector(store => store.application);
 
     const statusHandler = async (status, id) => {
-        console.log('called');
         try {
+            const payload = { status };
+            if (status.toLowerCase() === 'accepted') {
+                const interviewAt = window.prompt('Enter interview date and time in local format (YYYY-MM-DDTHH:mm). Leave blank if you want to save only the status.');
+                if (interviewAt) {
+                    payload.interviewAt = interviewAt;
+                }
+            }
             axios.defaults.withCredentials = true;
-            const res = await axios.post(`${APPLICATION_API_END_POINT}/status/${id}/update`, { status });
-            console.log(res);
+            const res = await axios.post(`${APPLICATION_API_END_POINT}/status/${id}/update`, payload);
             if (res.data.success) {
                 toast.success(res.data.message);
             }
@@ -62,7 +67,7 @@ const ApplicantsTable = () => {
                                             {
                                                 shortlistingStatus.map((status, index) => {
                                                     return (
-                                                        <div onClick={() => statusHandler(status, item?._id)} key={index} className='flex w-fit items-center my-2 cursor-pointer'>
+                                                            <div onClick={() => statusHandler(status, item?._id)} key={index} className='flex w-fit items-center my-2 cursor-pointer'>
                                                             <span>{status}</span>
                                                         </div>
                                                     )

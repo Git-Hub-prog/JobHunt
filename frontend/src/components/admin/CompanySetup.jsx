@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useSelector } from 'react-redux'
 import useGetCompanyById from '@/hooks/useGetCompanyById'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 const CompanySetup = () => {
     const params = useParams();
@@ -86,6 +87,18 @@ const CompanySetup = () => {
                         </Button>
                         <h1 className='font-bold text-xl'>Company Setup</h1>
                     </div>
+                    <div className='flex items-center gap-4 px-8 pb-6'>
+                        <Avatar className='h-16 w-16'>
+                            <AvatarImage src={singleCompany?.logo} alt={singleCompany?.name} />
+                            <AvatarFallback className='bg-[#6A38C2] text-white font-semibold'>
+                                {singleCompany?.name?.charAt(0)?.toUpperCase() || 'C'}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <h2 className='font-semibold'>{singleCompany?.name || 'Company Logo'}</h2>
+                            <p className='text-sm text-gray-500'>Upload or replace your company logo here.</p>
+                        </div>
+                    </div>
                     <div className='grid grid-cols-2 gap-4'>
                         <div>
                             <Label>Company Name</Label>
@@ -126,6 +139,7 @@ const CompanySetup = () => {
                         <div>
                             <Label>Logo</Label>
                             <Input
+                                name="file"
                                 type="file"
                                 accept="image/*"
                                 onChange={changeFileHandler}

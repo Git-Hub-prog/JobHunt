@@ -14,9 +14,16 @@ import AdminJobs from "./components/admin/AdminJobs";
 import PostJob from './components/admin/PostJob'
 import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
-
+import RecruiterDashboard from './components/admin/RecruiterDashboard'
+import AppliedJobsPage from './components/student/AppliedJobsPage'
+import BranchRecommendationsPage from './components/student/BranchRecommendationsPage'
+import MyNetwork from './components/student/MyNetwork'
 
 const appRouter = createBrowserRouter([
+  {
+    path: '/recruiter/dashboard',
+    element: <ProtectedRoute><RecruiterDashboard /></ProtectedRoute>
+  },
   {
     path: '/',
     element: <Home />
@@ -44,6 +51,18 @@ const appRouter = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />
+  },
+  {
+    path: "/applied-jobs",
+    element: <AppliedJobsPage />
+  },
+  {
+    path: "/branch-recommendations",
+    element: <BranchRecommendationsPage />
+  },
+  {
+    path: "/my-network",
+    element: <MyNetwork />
   },
   // admin ke liye yha se start hoga
   {
@@ -82,3 +101,4 @@ function App() {
 }
 
 export default App
+

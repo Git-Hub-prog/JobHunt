@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import store from './redux/store.js'
 import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
+import AuthInitializer from './components/AuthInitializer.jsx'
 
 const persistor = persistStore(store);
 
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
+        <AuthInitializer />
         <App />
         <Toaster />
       </PersistGate>
