@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import dns from "dns";
 import cron from "node-cron";
+import path from "path";
 
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
@@ -20,6 +21,7 @@ dotenv.config();
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
+const _dirname = path.resolve();
 
 // Middleware
 app.use(express.json());
@@ -35,16 +37,17 @@ app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-    res.status(200).send("Job portal API is running");
-});
-
 // Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/message", messageRoute);
+
+app.use(express.static(path.join(_dirname, "../frontend/dist")));
+app.get('*', (req,res)=>{
+    res.sendFile(path.resolve(_dirname, "../frontend", "dist", "index.html"));
+});
 
 // Start server
 app.listen(PORT, async () => {

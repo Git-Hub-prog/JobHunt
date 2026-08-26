@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "npm install --prefix frontend && npm run build --prefix frontend",
     "postinstall": "npm install --prefix backend",
     "start": "npm start --prefix backend"
   },
