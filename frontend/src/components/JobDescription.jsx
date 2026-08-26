@@ -8,6 +8,7 @@ import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { formatSalaryInLPA } from '@/utils/formatSalary';
+import { ShieldAlert, ShieldCheck } from 'lucide-react';
 
 const JobDescription = () => {
     const {singleJob} = useSelector(store => store.job);
@@ -18,6 +19,7 @@ const JobDescription = () => {
     const params = useParams();
     const jobId = params.id;
     const dispatch = useDispatch();
+    const isCompanyVerified = singleJob?.company?.verificationStatus === "verified";
 
     const applyJobHandler = async () => {
         try {
@@ -60,6 +62,17 @@ const JobDescription = () => {
                         <Badge className={'text-blue-700 font-bold'} variant="ghost">{singleJob?.postion} Positions</Badge>
                         <Badge className={'text-[#F83002] font-bold'} variant="ghost">{singleJob?.jobType}</Badge>
                         <Badge className={'text-[#7209b7] font-bold'} variant="ghost">{formatSalaryInLPA(singleJob?.salary)}LPA</Badge>
+                        {isCompanyVerified ? (
+                            <Badge className='gap-1 border-emerald-200 bg-emerald-50 text-emerald-700 font-bold' variant="outline">
+                                <ShieldCheck className='h-4 w-4' />
+                                Verified Company
+                            </Badge>
+                        ) : (
+                            <Badge className='gap-1 border-amber-200 bg-amber-50 text-amber-700 font-bold' variant="outline">
+                                <ShieldAlert className='h-4 w-4' />
+                                Company Not Verified
+                            </Badge>
+                        )}
                     </div>
                 </div>
                 <Button
@@ -72,6 +85,8 @@ const JobDescription = () => {
             <h1 className='border-b-2 border-b-gray-300 font-medium py-4'>Job Description</h1>
             <div className='my-4'>
                 <h1 className='font-bold my-1'>Role: <span className='pl-4 font-normal text-gray-800'>{singleJob?.title}</span></h1>
+                <h1 className='font-bold my-1'>Company: <span className='pl-4 font-normal text-gray-800'>{singleJob?.company?.name}</span></h1>
+                <h1 className='font-bold my-1'>Verification: <span className={`pl-4 font-normal ${isCompanyVerified ? 'text-emerald-700' : 'text-amber-700'}`}>{isCompanyVerified ? 'Verified' : 'Not verified'}</span></h1>
                 <h1 className='font-bold my-1'>Location: <span className='pl-4 font-normal text-gray-800'>{singleJob?.location}</span></h1>
                 <h1 className='font-bold my-1'>Description: <span className='pl-4 font-normal text-gray-800'>{singleJob?.description}</span></h1>
                 <h1 className='font-bold my-1'>Experience: <span className='pl-4 font-normal text-gray-800'>{singleJob?.experience} yrs</span></h1>

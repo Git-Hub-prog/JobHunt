@@ -18,6 +18,20 @@ const companySchema = new mongoose.Schema({
     logo:{
         type:String // URL to company logo
     },
+    verificationStatus:{
+        type:String,
+        enum:["unsubmitted", "pending", "verified", "rejected"],
+        default:"unsubmitted"
+    },
+    verification:{
+        businessEmail:{type:String},
+        registrationNumber:{type:String},
+        documentUrl:{type:String},
+        documentOriginalName:{type:String},
+        submittedAt:{type:Date},
+        reviewedAt:{type:Date},
+        rejectionReason:{type:String}
+    },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',

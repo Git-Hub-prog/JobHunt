@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from './ui/button'
-import { Bookmark } from 'lucide-react'
+import { Bookmark, ShieldCheck } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
@@ -40,6 +40,7 @@ const Job = ({ job, isSaved = false }) => {
 
     const daysAgo = daysAgoFunction(job?.createdAt);
     const companyInitial = job?.company?.name?.charAt(0)?.toUpperCase() || 'J';
+    const isCompanyVerified = job?.company?.verificationStatus === "verified";
 
     return (
         <div className='flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#6A38C2]/30 hover:shadow-lg'>
@@ -65,7 +66,15 @@ const Job = ({ job, isSaved = false }) => {
                     </Avatar>
                 </div>
                 <div className='min-w-0'>
-                    <h1 className='truncate font-semibold text-lg'>{job?.company?.name}</h1>
+                    <div className='flex min-w-0 items-center gap-2'>
+                        <h1 className='truncate font-semibold text-lg'>{job?.company?.name}</h1>
+                        {isCompanyVerified && (
+                            <Badge variant='outline' className='shrink-0 gap-1 rounded-full border-emerald-200 bg-emerald-50 text-emerald-700'>
+                                <ShieldCheck className='h-3.5 w-3.5' />
+                                Verified
+                            </Badge>
+                        )}
+                    </div>
                     <p className='truncate text-sm text-gray-500'>{job?.location}</p>
                 </div>
             </div>

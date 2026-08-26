@@ -10,9 +10,33 @@ import {
 } from '../ui/table';
 import { Avatar, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Edit2, MoreHorizontal } from 'lucide-react';
+import { Clock, Edit2, MoreHorizontal, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '../ui/badge';
+
+const verificationBadge = {
+    verified: {
+        label: "Verified",
+        icon: ShieldCheck,
+        className: "border-emerald-200 bg-emerald-50 text-emerald-700"
+    },
+    pending: {
+        label: "Pending",
+        icon: Clock,
+        className: "border-amber-200 bg-amber-50 text-amber-700"
+    },
+    rejected: {
+        label: "Rejected",
+        icon: ShieldAlert,
+        className: "border-red-200 bg-red-50 text-red-700"
+    },
+    unsubmitted: {
+        label: "Not submitted",
+        icon: ShieldAlert,
+        className: "border-gray-200 bg-gray-50 text-gray-700"
+    }
+};
 
 const CompaniesTable = () => {
     const { companies, searchCompanyByText } = useSelector(
@@ -48,6 +72,7 @@ const CompaniesTable = () => {
                     <TableRow>
                         <TableHead>Logo</TableHead>
                         <TableHead>Name</TableHead>
+                        <TableHead>Verification</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead className="text-right">Action</TableHead>
                     </TableRow>
@@ -63,6 +88,19 @@ const CompaniesTable = () => {
                             </TableCell>
 
                             <TableCell>{company.name}</TableCell>
+
+                            <TableCell>
+                                {(() => {
+                                    const badge = verificationBadge[company.verificationStatus || "unsubmitted"];
+                                    const Icon = badge.icon;
+                                    return (
+                                        <Badge variant="outline" className={`gap-1 rounded-full ${badge.className}`}>
+                                            <Icon className="h-4 w-4" />
+                                            {badge.label}
+                                        </Badge>
+                                    );
+                                })()}
+                            </TableCell>
 
                             <TableCell>
                                 {company.createdAt?.split("T")[0]}

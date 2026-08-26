@@ -29,6 +29,7 @@ const PostJob = () => {
     const navigate = useNavigate();
 
     const { companies } = useSelector(store => store.company);
+    const hasVerifiedCompany = companies.some((company) => company.verificationStatus === "verified");
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     };
@@ -156,7 +157,13 @@ const PostJob = () => {
                                             {
                                                 companies.map((company) => {
                                                     return (
-                                                        <SelectItem value={company?.name?.toLowerCase()}>{company.name}</SelectItem>
+                                                        <SelectItem
+                                                            key={company._id}
+                                                            value={company?.name?.toLowerCase()}
+                                                            disabled={company.verificationStatus !== "verified"}
+                                                        >
+                                                            {company.name} {company.verificationStatus === "verified" ? "(Verified)" : "(Verify first)"}
+                                                        </SelectItem>
                                                     )
                                                 })
                                             }
@@ -168,10 +175,13 @@ const PostJob = () => {
                         }
                     </div> 
                     {
-                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Post New Job</Button>
+                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" disabled={!hasVerifiedCompany} className="w-full my-4">Post New Job</Button>
                     }
                     {
                         companies.length === 0 && <p className='text-xs text-red-600 font-bold text-center my-3'>*Please register a company first, before posting a jobs</p>
+                    }
+                    {
+                        companies.length > 0 && !hasVerifiedCompany && <p className='text-xs text-amber-600 font-bold text-center my-3'>*Verify a company before posting jobs.</p>
                     }
                 </form>
             </div>

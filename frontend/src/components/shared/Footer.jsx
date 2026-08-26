@@ -20,7 +20,7 @@ const Footer = () => {
               <FaGithub className="text-black text-3xl hover:scale-110 transition" />
             </a>
 
-            <a href="https://www.youtube.com/@your-channel" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/@TechWaleBhaiya-l4i" target="_blank" rel="noopener noreferrer">
               <FaYoutube className="text-[#FF0000] text-3xl hover:scale-110 transition" />
             </a>
           </div>

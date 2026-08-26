@@ -1,4 +1,5 @@
 import { Company } from "../models/company.model.js";
+import { User } from "../models/user.model.js";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
@@ -90,8 +91,8 @@ export const updateCompany = async (req, res) => {
             ...(logoResponse && { logo: logoResponse.secure_url })
         };
 
-        const company = await Company.findByIdAndUpdate(
-            req.params.id,
+        const company = await Company.findOneAndUpdate(
+            { _id: req.params.id, userId: req.id },
             updateData,
             { new: true }
         );
@@ -108,6 +109,115 @@ export const updateCompany = async (req, res) => {
             success: true
         });
 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+    }
+}
+
+export const submitCompanyVerification = async (req, res) => {
+    try {
+        const { businessEmail, registrationNumber } = req.body;
+        const file = req.file;
+
+        if (!businessEmail || !registrationNumber || !file) {
+            return res.status(400).json({
+                message: "Business email, registration number, and verification document are required.",
+                success: false
+            });
+        }
+
+        const company = await Company.findOne({ _id: req.params.id, userId: req.id });
+
+        if (!company) {
+            return res.status(404).json({
+                message: "Company not found.",
+                success: false
+            });
+        }
+
+        const documentUri = getDataUri(file);
+        const documentResponse = await cloudinary.uploader.upload(documentUri.content, {
+            resource_type: "auto"
+        });
+
+        company.verificationStatus = "pending";
+        company.verification = {
+            businessEmail,
+            registrationNumber,
+            documentUrl: documentResponse.secure_url,
+            documentOriginalName: file.originalname,
+            submittedAt: new Date(),
+            reviewedAt: undefined,
+            rejectionReason: ""
+        };
+
+        await company.save();
+
+        return res.status(200).json({
+            message: "Company verification submitted for review.",
+            company,
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+    }
+}
+
+export const reviewCompanyVerification = async (req, res) => {
+    try {
+        const { status, rejectionReason = "" } = req.body;
+
+        if (!["verified", "rejected"].includes(status)) {
+            return res.status(400).json({
+                message: "Verification status must be verified or rejected.",
+                success: false
+            });
+        }
+
+        const reviewer = await User.findById(req.id);
+
+        if (!reviewer || reviewer.role !== "admin") {
+            return res.status(403).json({
+                message: "Only admins can review company verification.",
+                success: false
+            });
+        }
+
+        const company = await Company.findById(req.params.id);
+
+        if (!company) {
+            return res.status(404).json({
+                message: "Company not found.",
+                success: false
+            });
+        }
+
+        if (company.verificationStatus !== "pending") {
+            return res.status(400).json({
+                message: "Only pending verification requests can be reviewed.",
+                success: false
+            });
+        }
+
+        company.verificationStatus = status;
+        company.verification.reviewedAt = new Date();
+        company.verification.rejectionReason = status === "rejected" ? rejectionReason : "";
+
+        await company.save();
+
+        return res.status(200).json({
+            message: `Company verification ${status}.`,
+            company,
+            success: true
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).json({

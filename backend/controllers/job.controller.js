@@ -20,6 +20,23 @@ export const postJob = async (req, res) => {
                 success: false
             })
         };
+
+        const company = await Company.findOne({ _id: companyId, userId });
+
+        if (!company) {
+            return res.status(404).json({
+                message: "Company not found.",
+                success: false
+            });
+        }
+
+        if (company.verificationStatus !== "verified") {
+            return res.status(403).json({
+                message: "Company verification is required before posting jobs.",
+                success: false
+            });
+        }
+
         const job = await Job.create({
             title,
             description,
@@ -95,9 +112,9 @@ export const getAllJobs = async (req, res) => {
 export const getJobById = async (req, res) => {
     try {
         const jobId = req.params.id;
-        const job = await Job.findById(jobId).populate({
-            path:"applications"
-        });
+        const job = await Job.findById(jobId)
+            .populate({ path:"applications" })
+            .populate({ path:"company" });
         if (!job) {
             return res.status(404).json({
                 message: "Jobs not found.",
