@@ -1,0 +1,13 @@
+{
+  "name": "jobhunt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "npm install --prefix backend",
+    "start": "npm start --prefix backend"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}

@@ -5,9 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "seed:jobs": "node scripts/seedJobs.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "author": "",
   "license": "ISC",
